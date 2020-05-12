@@ -1,0 +1,5 @@
+---
+db_user: mark
+db_passwd: 12345
+db_name: mydatabase
+db_dumpfile: dumpfile.sql
