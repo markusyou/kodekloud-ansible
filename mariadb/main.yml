@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: db
   become: true
 
   vars_files:
@@ -30,4 +30,40 @@
         state: import
         name: "{{ db_name }}"
         target: "{{ db_dumpfile }}" 
+
+- hosts: storage
+  become: true
+  
+  vars_files:
+    - wpvars.yml
+    
+  tasks:
+    - name: Update WordPress config.php variable for DB user setting
+      lineinfile: 
+        dest: /data/wp-config.php
+        backup: yes
+        regexp: "fix these RNAME }}\\s+ALL=\\(ALL\\)\\s*ALL" 
+        line: "{{ ATMOUSERNAME }} ALL=(ALL) ALL" 
+        state: present
+
+    - name: Update WordPress config.php variable for DB password setting
+      lineinfile: 
+        dest: /data/wp-config.php
+        backup: no
+        regexp: "fix these}}\\s+ALL=\\(ALL\\)\\s*ALL" 
+        line: "{{ ATMOUSERNAME }} ALL=(ALL) ALL" 
+        state: present
+
+    - name: Update WordPress config.php variable for DB server setting
+      lineinfile: 
+        dest: /data/wp-config.php
+        backup: yes
+        regexp: "dbhost" 
+        line: "{{ DBHOSTNAME }}" 
+        state: present
+        
+        
+
+        
+ 
 
