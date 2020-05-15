@@ -20,16 +20,21 @@
         priv: '*.*:ALL' 
         state: present
 
-    - name: Create a new database with name 'bobdata'
+    - name: Create a new database 
       mysql_db:
         name: "{{ db_name }}"
         state: present
+   
+    - name: Copy database dump file
+      copy:
+      src: /home/thor/db.sql
+      dest: /tmp
    
     - name: Import file.sql similar to mysql -u <username> -p <password> < hostname.sql
       mysql_db:
         state: import
         name: "{{ db_name }}"
-        target: "{{ db_dumpfile }}" 
+        target: "/tmp/{{ db_dumpfile }}" 
 
 - hosts: storage
   become: true
@@ -41,29 +46,41 @@
     - name: Update WordPress config.php variable for DB user setting
       lineinfile: 
         dest: /data/wp-config.php
-        backup: yes
-        regexp: "fix these RNAME }}\\s+ALL=\\(ALL\\)\\s*ALL" 
-        line: "{{ ATMOUSERNAME }} ALL=(ALL) ALL" 
+        backup: no
+        regexp: "^\s+define\(\s\'DB\_USER\'\s+" 
+        line: "define( 'DB_USER', '{{ DB_USER }}' 
         state: present
 
     - name: Update WordPress config.php variable for DB password setting
       lineinfile: 
         dest: /data/wp-config.php
         backup: no
-        regexp: "fix these}}\\s+ALL=\\(ALL\\)\\s*ALL" 
-        line: "{{ ATMOUSERNAME }} ALL=(ALL) ALL" 
+        regexp: "^\s+define\(\s\'DB\_PASSWORD\'\s+" 
+        line: "define( 'DB_PASSWORD', '{{ DB_PASSWORD }}' 
         state: present
 
-    - name: Update WordPress config.php variable for DB server setting
+    - name: Update WordPress config.php variable for DB hostserver setting
       lineinfile: 
         dest: /data/wp-config.php
-        backup: yes
-        regexp: "dbhost" 
-        line: "{{ DBHOSTNAME }}" 
+        backup: no
+        regexp: "^\s+define\(\s\'DB\_HOST\'\s+" 
+        line: "define( 'DB_HOST', '{{ DB_HOST }}' 
         state: present
         
+    - name: Update WordPress config.php variable for DB name setting
+      lineinfile: 
+        dest: /data/wp-config.php
+        backup: no
+        regexp: "^\s+define\(\s\'DB\_NAME\'\s+" 
+        line: "define( 'DB_NAME', '{{ DB_NAME }}' 
+        state: present      
         
-
-        
- 
+ - hosts: lb 
+   vars_files:
+     - vars.yml
+    
+   tasks: 
+     - name: get webpage from lb
+       debug: msg="{{item}}"
+       loop: "{{ lookup('url', 'http://172.16.238.14/wp-config.php', wantlist=True) }}"
 
