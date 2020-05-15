@@ -1,5 +1,5 @@
 ---
-db_user: mark
+db_user: kodekloud_name
 db_passwd: 12345
-db_name: mydatabase
-db_dumpfile: dumpfile.sql
+db_name: kodekloud_db##
+db_dumpfile: db.sql
