@@ -4,10 +4,15 @@
 172.16.238.10 ansible_user=tony ansible_ssh_pass=Ir0nM@n host_key_checking=false
 172.16.238.11 ansible_user=steve ansible_ssh_pass=Am3ric@ host_key_checking=false
 172.16.238.12 ansible_user=banner ansible_ssh_pass=BigGr33n host_key_checking=false
+[lb]
 172.16.238.14 ansible_user=loki ansible_ssh_pass=Mischi3f host_key_checking=false
+[db]
 172.16.239.10 ansible_user=peter ansible_ssh_pass=Sp!dy host_key_checking=false
+[storage]
 172.16.238.15 ansible_user=natasha ansible_ssh_pass=Bl@kW host_key_checking=false
+[backup]
 172.16.238.16 ansible_user=clint ansible_ssh_pass=H@wk3y3 host_key_checking=false
+[mail]
 172.16.238.17 ansible_user=groot ansible_ssh_pass=Gr00T123 host_key_checking=false
 
 #jump_host thor mjolnir123
