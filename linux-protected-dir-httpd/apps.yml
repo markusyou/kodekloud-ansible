@@ -1,0 +1,72 @@
+---
+#1. Create /var/www/html/sysops directory if doesn't exist.
+#2. Add an user javed in htpasswd and set its password to ksH85UJjhb.
+#3. There is a file /tmp/index.html placed on Jump Server. Copy the same to new directory you created, please make sure default document root should remain /var/www/html.
+
+- name: Configure application servers for Apache Pam Auth
+  gather_facts: false
+  become: true
+  hosts: apps
+  vars: 
+    webdir: "/var/www/html/sysops"
+    webuser: "javed"
+    webpass: "ksH85UJjhb"
+    websrc: "/tmp/index.html"
+
+  tasks:
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+    # 
+    # above is for credential setup on target hosts
+    # below is for actual task assignment
+    #
+    - name: Create a directory if it does not exist
+      file:
+        path: "{{ webdir }}"
+        state: directory
+        mode: '0777'
+        owner: apache
+        group: apache
+    
+    - name: "#2 Add a user to a .htpasswd ile and ensure permissions are set"
+      htpasswd:
+        path: "{{ webdir }}/.htpasswd"
+        name: "{{ webuser }}"
+        password: "{{ webpass }}"
+        owner: apache
+        group: apache 
+        mode: 0640
+      
+        blockinfile: |
+          '<Directory "/var/www/html">
+             AuthType Basic
+             AuthName "Restricted Content"
+             AuthUserFile /etc/apache2/.htpasswd
+             Require valid-user
+          </Directory>'
+        backup: false
+         
+    - name: "#3 Place {{ websrc }} in {{ webdir }}"
+      copy:
+        src: " {{ websrc }}"
+        target: "{{ webdir }}/index.html"
+        owner: "apache"
+        group: "apache"
+
+    - name: Restart service httpd, in all cases
+      service:
+        name: httpd
+        state: restarted
+
+
