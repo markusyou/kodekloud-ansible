@@ -2,7 +2,8 @@
 echo "Install ansible and git ackage"
 echo "Use this password: mjolnir123"
 sudo yum -y install ansible git
-git clone https://github.com/markusyou/kodekloud-ansible.gitcho "Create hosts file in thor's homedir on jump server"
+git clone https://github.com/markusyou/kodekloud-ansible.git
+echo "Create hosts file in thor's homedir on jump server"
 echo '
 [jumphost]
 locahost ansible_ssh_user=tony ansible_ssh_pass="mjolnir123" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub" ansible_become_user=root ansible_become_pass="mjolnir123"

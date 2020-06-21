@@ -62,7 +62,7 @@
       blockinfile:
         path: "/etc/httpd/conf.d/devops.conf"
         block: |
-          '<Directory "/var/www/html/devops">
+          <Directory "/var/www/html/devops">
              AuthType Basic
              AuthName "Restricted Content"
              AuthUserFile /etc/apache2/htpasswd
