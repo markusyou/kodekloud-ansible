@@ -73,7 +73,6 @@
 
     - name: "#3 Place {{ websrc }} in {{ webdest }} "
       copy:
-        #remote_src: true
         src: " {{ websrc }}"
         dest: "{{ webdest }}"
         owner: "apache"
