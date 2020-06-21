@@ -13,7 +13,7 @@ stapp03 ansible_ssh_user=banner ansible_ssh_pass="BigGr33n" ansible_ssh_key="/ho
 > ~/hosts
 
 echo "Launch jump server ansible script.. tweak to /etc/ansible/ansible.cfg"
-ansible-playbook -i ./hosts jumpserver.yml
+echo "ansible-playbook -i ./hosts jumpserver.yml"
 echo "Launch app server ansible script"
-ansible-playbook -i ./hosts apps.yml
+echo "ansible-playbook -i ./hosts apps.yml"
 
