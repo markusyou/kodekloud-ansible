@@ -7,10 +7,10 @@
   gather_facts: false
   become: true
   hosts: apps
-  vars: 
-    webdir: "/var/www/html/sysops"
-    webuser: "javed"
-    webpass: "ksH85UJjhb"
+  vars:
+    webdest: "/var/www/html/devops"
+    webuser: "rose"
+    webpass: "8FmzjvFU6S"
     websrc: "/tmp/index.html"
 
   tasks:
@@ -27,40 +27,55 @@
         regexp: '^%wheel'
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
-    # 
+    #
     # above is for credential setup on target hosts
     # below is for actual task assignment
     #
     - name: Create a directory if it does not exist
       file:
-        path: "{{ webdir }}"
+        path: "{{ webdest }}"
         state: directory
         mode: '0777'
         owner: apache
         group: apache
-    
-    - name: "#2 Add a user to a .htpasswd ile and ensure permissions are set"
+
+    - name: Install package with repo enabled
+      yum:
+        name: "python-passlib"
+        enablerepo: epel
+
+    - name: Add a user to a .htpasswd ile and ensure permissions are set
       htpasswd:
-        path: "{{ webdir }}/.htpasswd"
+        path: "{{ webdest }}/htpasswd"
         name: "{{ webuser }}"
         password: "{{ webpass }}"
         owner: apache
-        group: apache 
+        group: apache
         mode: 0640
-      
-        blockinfile: |
-          '<Directory "/var/www/html">
+
+    - name: Ansible create file if it doesn't exist example
+      file:
+        path: "/etc/httpd/conf.d/devops.conf"
+        state: touch
+
+    - name: "#2 - part b - update apache config"
+      blockinfile:
+        path: "/etc/httpd/conf.d/devops.conf"
+        block: |
+          '<Directory "/var/www/html/devops">
              AuthType Basic
              AuthName "Restricted Content"
-             AuthUserFile /etc/apache2/.htpasswd
+             AuthUserFile /etc/apache2/htpasswd
              Require valid-user
-          </Directory>'
-        backup: false
-         
-    - name: "#3 Place {{ websrc }} in {{ webdir }}"
+          </Directory>
+        backup: true
+        insertafter: 'EOF'
+
+    - name: "#3 Place {{ websrc }} in {{ webdest }} "
       copy:
+        #remote_src: true
         src: " {{ websrc }}"
-        target: "{{ webdir }}/index.html"
+        dest: "{{ webdest }}"
         owner: "apache"
         group: "apache"
 
@@ -68,5 +83,4 @@
       service:
         name: httpd
         state: restarted
-
 
