@@ -1,0 +1,98 @@
+---
+For our infrastructure in Stratos Datacenter we have a requirement to serve our website code from a common/shared location that can be shared among all app nodes. For this we came up with a solution to use NFS (Network File System) server that can store the data and we can mount the share among our app nodes. The dedicated NFS server going to be our storage server. To accomplish this task do the following given steps:
+
+
+1 Install required NFS packages on storage server.
+
+2 Configure storage server to act as an NFS server.
+
+3 Make a NFS share /webdata on storage server.
+
+4 Install and configure NFS client packages on all app nodes and configure them to act as NFS client.
+
+5 Mount /webdata directory on all app nodes at /var/www/opt directory (Create the directories if don't exist).
+
+6 Start and enable required services.
+
+#-----------------------------------------------------------
+#NFS server setup
+#-----------------------------------------------------------
+
+- name: Configure NFS Server
+  gather_facts: false
+  become: true
+  hosts: nfsserver
+  vars: 
+    nfsshare: "/webdata"
+  
+  tasks:
+    - name: Setup user ssh key on jump host
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+    # Ensure NFS packages are installed
+    - name: Check and install nfs packages
+      yum:
+        name: "{{ item }}"
+        state: installed
+      with_items:
+        - nfs-utils
+
+    # add line to /etc/exports
+    ## NFS server Configuration
+    #
+    # Example for NFSv2 and NFSv3:
+    # /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+    #
+    # Example for NFSv4:
+    # /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+    # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+    #
+    - name: Exportfs
+      command: exportfs -o "{{ nfsshare }} *(rw,sync,nohide)"
+
+    - name: Restart nfs 
+      service:
+        name: nfs
+        state: restarted
+        enabled: yes
+
+#-----------------------------------------------------------
+#NFS Client setups
+#-----------------------------------------------------------
+- name: Configure NFS client
+  gather_facts: false
+  become: true
+  hosts: apps
+  vars:
+    nfsdest: "/var/www/opt"
+    nfssrc: "/webdata"
+        
+  tasks:
+
+    # Ensure NFS packages are installed
+    - name: Check and install nfs packages
+      yum:
+        name: "{{ item }}"
+        state: installed
+      with_items:
+        - nfs-utils
+
+    - name: "create mount point {{ nfsdest }}"
+      file: 
+        path: "{{ nfsdest }}"
+        state: directory
+        mode: 0755
+        group: root
+        owner: root
+
+    - name: Mount nfs
+      mount:
+       path: "{{ nfsdest }}"
+       src: "{{ nfssrc }}"
+       fstype: nfs
+       state: mounted
+
+
