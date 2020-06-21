@@ -73,7 +73,7 @@
 
     - name: "#3 Place {{ websrc }} in {{ webdest }} "
       copy:
-        src: " {{ websrc }}"
+        src: "{{ websrc }}"
         dest: "{{ webdest }}"
         owner: "apache"
         group: "apache"
