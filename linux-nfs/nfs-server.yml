@@ -49,7 +49,7 @@
         block: |
            {{ nfsshare }} *(rw,sync,nohide)
         backup: false
-        marker: false
+        marker: ""
         insertafter: 'EOF'
 
     - name: Export files in /etc/exports
