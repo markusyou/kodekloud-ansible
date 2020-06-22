@@ -35,32 +35,24 @@
     # Ensure NFS packages are installed
     - name: Check and install nfs packages
       yum:
-        name: "{{ item }}"
+        name: "nfs-utils"
         state: installed
-      with_items:
-        - nfs-utils
 
-    # add line to /etc/exports
-    ## NFS server Configuration
-    #
-    # Example for NFSv2 and NFSv3:
-    # /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
-    #
-    # Example for NFSv4:
-    # /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
-    # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
-    #
-    #[natasha@ststor01 ~]$ cat /etc/exports
-    #/nfsshare *(sync)
+    - name: Create /etc/exports
+      file: 
+        name: "/etc/exports"
+        state: touch
+       
+    - name: "Add export to /etc/exports"
+      blockinfile:
+        path: "/etc/exports"
+        block: |
+           "{{ nfsshare }} *(rw,sync,nohide)"
+        backup: true
+        insertafter: 'EOF'
 
-    - name: Exportfs
-      command: exportfs -o "{{ nfsshare }} *(rw,sync,nohide)"
-
-    - name: Exportfs
-      command: exportfs -f
-
-    - name: Exportfs
-      command: exportfs -v
+    - name: Export files in /etc/exports
+      command: exportfs -r
 
     - name: Restart nfs 
       service:
@@ -76,7 +68,7 @@
   become: true
   hosts: apps
   vars:
-    nfsdest: "/var/www/opt"
+    nfsdest: "/var/www/webdata"
     nfssrc: "172.16.238.15:/nfsshare"
         
   tasks:
