@@ -36,5 +36,5 @@ yum -y install nginx httpd firewalld
 systemctl restart nginx
 systemctl restart httpd
 systemctl restart firewalld
-sudo firewall-cmd --zone=public --add-service=http --permanent
+firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="172.16.238.14" port port=8080 protocol=tcp accept'

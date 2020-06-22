@@ -1,0 +1,57 @@
+---
+- name: Configure firewall rules for nginx and apache
+  gather_facts: false
+  become: true
+  hosts: apps
+  
+  tasks:
+    - name: Setup user ssh key on jump host
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+    # Ensure packages are installed
+    - name: Check and install nfs packages
+      yum:
+        name: "nginx,httpd,firewalld"
+        state: installed
+- name: start firewalld service: name: firewalld state: restarted
+        enabled: yes
+
+    - name: start httpd 
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+
+    - name: start nginx 
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+    - name: start firewalld 
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+
+    - name: start dbus 
+      service:
+        name: dbus
+        state: restarted
+        enabled: yes
+
+    - name: add firewall rule 1
+      command: firewall-cmd --zone=public --add-service=http --permanent
+
+    - name: add firewall rule 2
+      command: firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="172.16.238.14" port port=8080 protocol=tcp accept'
+
+    - name: start firewalld 
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+
