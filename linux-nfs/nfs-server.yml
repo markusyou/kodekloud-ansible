@@ -47,8 +47,9 @@
       blockinfile:
         path: "/etc/exports"
         block: |
-           "{{ nfsshare }} *(rw,sync,nohide)"
-        backup: true
+           {{ nfsshare }} *(rw,sync,nohide)
+        backup: false
+        marker: false
         insertafter: 'EOF'
 
     - name: Export files in /etc/exports
