@@ -16,7 +16,10 @@
       yum:
         name: "nginx,httpd,firewalld"
         state: installed
-- name: start firewalld service: name: firewalld state: restarted
+    - name: start firewalld 
+      service: 
+        name: firewalld 
+        state: restarted
         enabled: yes
 
     - name: start httpd 
