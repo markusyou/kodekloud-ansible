@@ -12,7 +12,7 @@
         key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
 
     # Ensure packages are installed
-    - name: Check and install nfs packages
+    - name: Check and install packages
       yum:
         name: "nginx,httpd,firewalld"
         state: installed
