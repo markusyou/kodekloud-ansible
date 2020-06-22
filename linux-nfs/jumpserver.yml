@@ -32,4 +32,10 @@
         state: present
         force: no
 
-
+    - name: Add github.com to /etc/hosts file
+      become: true
+      lineinfile:
+        dest: "/etc/hosts"
+        state: present
+        regexp: 'EOF'
+        line: '140.82.112.4   githib.com'
