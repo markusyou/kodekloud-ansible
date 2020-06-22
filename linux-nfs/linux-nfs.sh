@@ -3,7 +3,7 @@ echo "Install ansible and git ackage"
 echo "Use this password: mjolnir123"
 sudo yum -y install ansible git
 git clone https://github.com/markusyou/kodekloud-ansible.git
-cd ~/kodekloud-ansible/linux-nfs
+cd 
 echo "Create hosts file in thor's homedir on jump server"
 echo '
 [jumphost]
@@ -14,8 +14,8 @@ stapp02  ansible_ssh_user=steve ansible_ssh_pass="Am3ric@" ansible_ssh_key="/hom
 stapp03 ansible_ssh_user=banner ansible_ssh_pass="BigGr33n" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="BigGr33n" 
 [nfsserver]
 ststor01  ansible_ssh_user=natasha ansible_ssh_pass="Bl@kW" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="Bl@kW"' \
-> ~/hosts
-
+> /home/thor/kodekloud-ansible/linux-nfs/hosts
+cd /home/thor/kodekloud-ansible/linux-nfs
 echo "Launch jump server ansible script."
 echo "ansible-playbook -i ./hosts jumpserver.yml"
 echo "Launch nfs server ansible script"
