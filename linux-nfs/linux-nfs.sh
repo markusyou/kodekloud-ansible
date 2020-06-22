@@ -13,7 +13,7 @@ stapp01 ansible_ssh_user=tony ansible_ssh_pass="Ir0nM@n" ansible_ssh_key="/home/
 stapp02  ansible_ssh_user=steve ansible_ssh_pass="Am3ric@" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="Am3ric@"
 stapp03 ansible_ssh_user=banner ansible_ssh_pass="BigGr33n" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="BigGr33n" 
 [nfsserver]
-ststor01  ansible_ssh_user=natasha ansible_ssh_pass="Bl@kW0" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="Bl@kW0"' \
+ststor01  ansible_ssh_user=natasha ansible_ssh_pass="Bl@kW" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub"  ansible_become_user=root ansible_become_pass="Bl@kW"' \
 > ~/hosts
 
 echo "Launch jump server ansible script."
