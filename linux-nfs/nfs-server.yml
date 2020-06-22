@@ -69,8 +69,9 @@
   become: true
   hosts: apps
   vars:
+    nfsshare: "/web"
     nfsdest: "/var/www/webdata"
-    nfssrc: "172.16.238.15:/nfsshare"
+    nfssrc: "172.16.238.15:/{{ nfsshare }}"
         
   tasks:
 
