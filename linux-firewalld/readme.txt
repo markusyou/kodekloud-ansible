@@ -38,3 +38,9 @@ systemctl restart httpd
 systemctl restart firewalld
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="172.16.238.14" port port=8080 protocol=tcp accept'
+
+systemctl restart firewalld;firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="172.16.238.0/24" port port=8096 protocol=tcp accept';firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="172.16.238.14" port port=5004 protocol=tcp accept';systemctl restart firewalld
+
+grep -i Listen /etc/httpd/conf/httpd.conf - to get port  8096 for this round
+grep -i listen /etc/nginx/nginx.conf  - get get port  5004 for this round
+
