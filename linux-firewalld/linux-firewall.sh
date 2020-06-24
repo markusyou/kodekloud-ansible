@@ -17,4 +17,4 @@ cd /home/thor/kodekloud-ansible/linux-firewalld
 echo "Launch jump server ansible script."
 echo "ansible-playbook -i ./hosts jumpserver.yml"
 echo "Launch nfs server ansible script"
-echo "ansible-playbook -i ./hosts linux-firewalld.yml"
+echo "ansible-playbook -i ./hosts linux-firewall.yml"
