@@ -41,7 +41,9 @@
 
     - name: enable rich rule
       firewalld:
-        rich_rule: rule protocol=tcp family=ipv4  to-port=6100 source=172.16.238.14 accept
+        rich_rule: rule family=ipv4 accept
+        source: 172.16.238.14/24 
+        port: 6100/tcp
         permanent: yes
         state: enabled
 
