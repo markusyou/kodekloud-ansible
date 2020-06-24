@@ -1,9 +1,9 @@
---
+---
 - name: Configure firewall rules for nginx and apache
   gather_facts: false
   become: true
   hosts: apps
-  
+
   tasks:
     - name: Setup user ssh key on jump host
       authorized_key:
@@ -27,50 +27,46 @@
         name: "firewalld"
         state: installed
 
-    - name: start dbus 
+    - name: start dbus
       service:
         name: dbus
         state: restarted
         enabled: yes
 
-    - name: start firewalld 
-      service: 
-        name: firewalld 
-        state: restarted
-        enabled: yes
-
-    - name: enable rich rule
-      firewalld:
-        ## change port ##
-        rich_rule: rule family=ipv4 protocol=tcp to-port=8443 accept
-	source: 172.16.238.12
-        permanent: yes
-        state: enabled
-
-    - name: start firewalld 
+    - name: start firewalld
       service:
         name: firewalld
         state: restarted
         enabled: yes
 
-    - name: enabe httpd service rule 
+    - name: enable rich rule
       firewalld:
-	zone: public
-        rich_rule: rule service name="http" accept
+        rich_rule: rule protocol=tcp family=ipv4  to-port=6100 source=172.16.238.14 accept
         permanent: yes
         state: enabled
 
-    - name: start httpd 
+    - name: enabe httpd service rule
+      firewalld:
+        rich_rule: rule service name="http" accept
+        zone: public
+        permanent: yes
+        state: enabled
+
+    - name: start firewalld
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+
+    - name: start httpd
       service:
         name: httpd
         state: restarted
         enabled: yes
 
-    - name: start nginx 
+    - name: start nginx
       service:
         name: nginx
         state: restarted
         enabled: yes
-
-
 
