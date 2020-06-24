@@ -41,15 +41,13 @@
 
     - name: enable rich rule
       firewalld:
-        rich_rule: rule family=ipv4 accept
-        source: 172.16.238.14/24 
-        port: 6100/tcp
+        rich_rule: family="ipv4" source address="172.16.238.14" port port=8082 protocol=tcp accept
         permanent: yes
         state: enabled
 
     - name: enabe httpd service rule
       firewalld:
-        rich_rule: rule service name="http" accept
+        rich_rule: family="ipv4" source address=* port port=8096 protocol=tcp accept
         zone: public
         permanent: yes
         state: enabled
