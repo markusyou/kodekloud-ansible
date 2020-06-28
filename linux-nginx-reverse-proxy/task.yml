@@ -13,6 +13,12 @@
 
   tasks:
     # Ensure packages are installed
+    - name: Check and install apache package
+      yum:
+        name: "httpd"
+        state: installed
+
+    # Ensure packages are installed
     - name: Check and install nginx package
       yum:
         name: "nginx"
@@ -27,6 +33,11 @@
         mode: '0644'
 
       service:
+        name: httpd
+        state: restarted
+        enabled: yes
+
+      service:
         name: nginx
         state: restarted
         enabled: yes
@@ -36,4 +47,3 @@
         name: nginx
         state: restarted
         enabled: yes
-
