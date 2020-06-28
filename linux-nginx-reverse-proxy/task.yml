@@ -1,0 +1,39 @@
+---
+- name: Configure nginx as reverse proxy
+  gather_facts: false
+  become: true
+  hosts: apps
+
+  pre_tasks:
+    - name: Setup user ssh key on jump host
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+  tasks:
+    # Ensure packages are installed
+    - name: Check and install nginx package
+      yum:
+        name: "nginx"
+        state: installed
+
+    - name: Create conf.d/reverse.conf
+      copy:
+        src: ./nginx-reverse.conf
+        dest: /etc/nginx-reverse.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+

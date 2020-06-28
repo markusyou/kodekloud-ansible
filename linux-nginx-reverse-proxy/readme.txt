@@ -1,0 +1,48 @@
+# Redhat hat 7 solution
+access.redhat.com/solutions/1225423
+
+#/etc/nginx/conf.d/reverse.conf <--- can be any file name in the conf.d directory
+upstream backendServers {
+    server 192.168.122.1:8080 weight=1;
+    server 192.168.122.2:8081 weight=1;
+    }
+
+
+# HTTP server
+# Proxy with no SSL
+
+    server {
+        listen       80;
+        server_name  nginx.example.com;
+
+
+         location / {
+         proxy_set_header Host $http_host;
+         proxy_pass http://backendServers$request_uri;
+        }
+    }
+
+
+# HTTPS server
+# Proxy with SSL
+
+    server {
+        listen       443;
+        server_name  nginx.example.com;
+
+         location / {
+         proxy_set_header Host $http_host;
+         proxy_pass http://backendServers$request_uri;
+        }
+
+        ssl                  on;
+        ssl_certificate      /etc/opt/rh/rh-nginx18/nginx/server.crt;
+        ssl_certificate_key  /etc/opt/rh/rh-nginx18/nginx/server.key;
+
+        ssl_session_timeout  5m;
+
+        ssl_protocols  SSLv2 SSLv3 TLSv1;
+        ssl_ciphers  HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers   on;
+
+      }
