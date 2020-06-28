@@ -3,13 +3,31 @@
   gather_facts: false
   become: true
   hosts: apps
-
+  #
+  #a. Install Apache Server on Nautilus Backup Server and configure it to use 3000 port (do not bind it to 127.0.0.1 only, keep it default i.e let Apache listen on server's IP, hostname, localhost, 127.0.0.1 etc).
+  #
+  #b. Install Nginx webserver on Nautilus Backup Server and configure it to use 8093.
+  #
+  #c. Configure Nginx as a reverse proxy server for Apache.
+  #
+  #d. There is a sample index file /home/index.html on Jump Host, copy that file to Apache's document root.
+  #
+  #e. Make sure to start Apache and Nginx services.
+  #
+  #f. You can test final changes using curl command, e.g curl http://<backup server IP or Hostname>:8093.
+  #
+  #
+  #
   pre_tasks:
     - name: Setup user ssh key on jump host
       authorized_key:
         user: "{{ ansible_ssh_user }}"
         state: present
         key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+  vars: 
+    nginx-port: 8093
+    apache-port: 3000
 
   tasks:
     # Ensure packages are installed
@@ -32,6 +50,14 @@
         group: root
         mode: '0644'
 
+    - name:  Copy /home/index.html to web directory
+      copy:
+        src: /home/index.html
+        dest: /var/web/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+
       service:
         name: httpd
         state: restarted
@@ -47,3 +73,11 @@
         name: nginx
         state: restarted
         enabled: yes
+
+    - name: check backup server
+      uri:
+        url: http://stbkp01.stratos.xfusioncorp.com
+        return_content: yes
+      register: webpage
+
+
