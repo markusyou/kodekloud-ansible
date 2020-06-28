@@ -58,6 +58,22 @@
         group: root
         mode: '0644'
 
+    - name: Update Listen port for Apache
+      become: true
+      lineinfile:
+        dest: "/etc/nginx/conf/httpd.conf"
+        state: present
+        regexp: '^Listen'
+        line: 'Listen: {{ apache-port }} '
+
+    - name: Update Listen port for Nginx
+      become: true
+      lineinfile:
+        dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
+        state: present
+        regexp: '^Listen'
+        line: 'Listen: {{ nginx-port }} '
+
       service:
         name: httpd
         state: restarted
