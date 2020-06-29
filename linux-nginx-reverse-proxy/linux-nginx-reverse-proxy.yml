@@ -30,6 +30,12 @@
     apache-port: 3000
 
   tasks:
+    # Ensure EPEL is installed
+    - name: Check and install apache package
+      yum:
+        name: "epel-release"
+        state: installed
+
     # Ensure packages are installed
     - name: Check and install apache package
       yum:
@@ -44,16 +50,16 @@
 
     - name: Create conf.d/reverse.conf
       copy:
-        src: ./nginx-reverse.conf
-        dest: /etc/nginx-reverse.conf
+        src: "./nginx-reverse.conf"
+        dest: "/etc/nginx-reverse.conf"
         owner: root
         group: root
         mode: '0644'
 
     - name:  Copy /home/index.html to web directory
       copy:
-        src: /home/index.html
-        dest: /var/web/html/index.html
+        src: "/home/index.html"
+        dest: "/var/web/html/index.html"
         owner: root
         group: root
         mode: '0644'
@@ -63,16 +69,16 @@
       lineinfile:
         dest: "/etc/nginx/conf/httpd.conf"
         state: present
-        regexp: '^Listen'
-        line: 'Listen: {{ apache-port }} '
+        regexp: "^Listen"
+        line: "Listen: {{ apache-port }}" 
 
     - name: Update Listen port for Nginx
       become: true
       lineinfile:
         dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
         state: present
-        regexp: '^Listen'
-        line: 'Listen: {{ nginx-port }} '
+        regexp: "^Listen"
+        line: "Listen: {{ nginx-port }}"
 
       service:
         name: httpd
@@ -92,7 +98,7 @@
 
     - name: check backup server
       uri:
-        url: http://stbkp01.stratos.xfusioncorp.com
+        url: "http://stbkp01.stratos.xfusioncorp.com:{{ apache-port }}"
         return_content: yes
       register: webpage
 
