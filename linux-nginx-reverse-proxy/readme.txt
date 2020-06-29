@@ -15,28 +15,24 @@ f. You can test final changes using curl command, e.g curl http://<backup server
 
 
 ------------------------------
+test nginx configuration
+nginx -t
 
 # Redhat hat 7 solution
 access.redhat.com/solutions/1225423
 
 #/etc/nginx/conf.d/reverse.conf <--- can be any file name in the conf.d directory
-upstream backendServers {
-    server 192.168.122.1:8080 weight=1;
-    server 192.168.122.2:8081 weight=1;
-    }
-
 
 # HTTP server
 # Proxy with no SSL
 
     server {
-        listen       80;
+        listen       nginxport;
         server_name  nginx.example.com;
 
 
          location / {
-         proxy_set_header Host $http_host;
-         proxy_pass http://backendServers$request_uri;
+         proxy_pass http://localhost:apacheport;
         }
     }
 

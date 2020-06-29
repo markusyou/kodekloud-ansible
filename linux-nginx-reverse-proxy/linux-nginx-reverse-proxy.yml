@@ -77,8 +77,16 @@
       lineinfile:
         dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
         state: present
-        regexp: "^Listen"
-        line: "Listen: {{ nginx-port }}"
+        regexp: "^listen"
+        line: "listen: {{ nginx-port }}"
+    
+    - name: Update Listen port for Nginx
+      become: true
+      lineinfile:
+        dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
+        state: present
+        regexp: "server_name "
+        line: "server_name stbkp01.stratos.xfusioncorp.com"
 
       service:
         name: httpd
