@@ -39,5 +39,5 @@
       lineinfile:
         path: "/etc/hosts"
         state: present
-        regexp: 'EOF'
-        line: '140.82.112.4   githib.com'
+        line: '140.82.112.4    githib.com'
+        unsafe_writes: true
