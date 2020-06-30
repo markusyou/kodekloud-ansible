@@ -25,6 +25,9 @@
         state: present
         key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
 
+  vars: 
+    target_url: "http://stbkp01.stratos.xfusioncorp.com"
+
   vars_prompt:
     - name: "nginxport"
       prompt: "Nginx port number(8093): "
@@ -108,8 +111,5 @@
         state: restarted
         enabled: yes
 
-    - name: check backup server
-      uri:
-        url: "http://stbkp01.stratos.xfusioncorp.com:{{ apache-port }}"
-        return_content: yes
-      register: webpage
+    - name: return content of web page
+      debug: msg="{{ lookup('url', '{{ target_url }}:{{ aoacheport }}, split_lines=False) }}"
