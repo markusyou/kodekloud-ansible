@@ -1,6 +1,7 @@
 #!/bin/bash
 project_name="/home/thor/kodekloud-ansible"
-project_path="${project_name}/linux-nginx-reverse-proxy"
+project_file="linux-nginx-reverse-proxy"
+project_path="${project_name}/${project_file}"
 echo "Install ansible and git package"
 echo "Use this password: mjolnir123"
 sudo yum -y install ansible git
@@ -18,4 +19,4 @@ cd "${project_path}"
 echo "Launch jump server ansible script."
 ansible-playbook -i hosts jumpserver.yml
 echo "Launch project ansible script"
-ansible-playbook -i ./hosts ${project_name}.yml
+ansible-playbook -i ./hosts ${project_file}.yml
