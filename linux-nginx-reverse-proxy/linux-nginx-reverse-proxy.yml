@@ -93,8 +93,8 @@
       lineinfile:
         dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         state: present
-        regexp: '^\s+server_name\s' 
-        line: "server_name stbkp01.stratos.xfusioncorp.com ;"
+        regexp: '^\s+proxy_pass\s'
+        line: 'proxy_pass http://localhost:{{ apacheport }} ;'
 
     - name: Restart httd
       service:
