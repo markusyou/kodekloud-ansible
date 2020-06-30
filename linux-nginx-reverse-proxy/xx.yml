@@ -25,17 +25,14 @@
         state: present
         key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
 
-  vars_prompt: 
-    - name: nginx-port
+  vars_prompt:
+    - name: nginxport
       prompt: "Nginx port number(8093): "
       private: no
 
-    - name: apache-port
+    - name: apacheport
       prompt: "Apache port number(3000): "
       private: no
-
-    #nginx-port: 8093
-    #apache-port: 3000
 
   tasks:
     # Ensure EPEL is installed
@@ -56,7 +53,7 @@
         name: "nginx"
         state: installed
 
-    - name: Create conf.d/reverse.conf
+    - name: "Create conf.d/nginxreverse.conf"
       copy:
         src: "./nginx-reverse.conf"
         dest: "/etc/nginx-reverse.conf"
@@ -72,23 +69,23 @@
         group: root
         mode: '0644'
 
-    - name: Apache Listen port
+    - name: "Apache Update Listen port"
       become: true
       lineinfile:
         dest: "/etc/nginx/conf/httpd.conf"
         state: present
         regexp: "^Listen"
-        line: "Listen: {{ apache-port }}" 
+        line: "Listen: 4000"
 
-    - name: Update Listen port for Nginx
+    - name: "Nginx Update Listen port"
       become: true
       lineinfile:
         dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
         state: present
         regexp: "^listen"
-        line: "listen: {{ nginx-port }}"
-    
-    - name: Nginx server name 
+        line: "listen: 3000"
+
+    - name: "Reverse proxy servername Update"
       become: true
       lineinfile:
         dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
@@ -96,9 +93,13 @@
         regexp: "server_name "
         line: "server_name stbkp01.stratos.xfusioncorp.com"
 
-    - name: Restart httd
       service:
         name: httpd
+        state: restarted
+        enabled: yes
+
+      service:
+        name: nginx
         state: restarted
         enabled: yes
 
@@ -113,5 +114,4 @@
         url: "http://stbkp01.stratos.xfusioncorp.com:{{ apache-port }}"
         return_content: yes
       register: webpage
-
 
