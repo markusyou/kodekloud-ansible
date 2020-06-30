@@ -86,7 +86,7 @@
         dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         state: present
         regexp: '^\s+listen'
-        line: "listen {{ nginxport }}"
+        line: "listen {{ nginxport }} ;"
 
     - name: Nginx server name
       become: true
@@ -94,7 +94,7 @@
         dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         state: present
         regexp: '^\s+server_name\s' 
-        line: "server_name stbkp01.stratos.xfusioncorp.com"
+        line: "server_name stbkp01.stratos.xfusioncorp.com ;"
 
     - name: Restart httd
       service:
