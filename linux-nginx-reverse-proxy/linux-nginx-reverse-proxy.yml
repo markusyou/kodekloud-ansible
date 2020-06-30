@@ -25,12 +25,12 @@
         state: present
         key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
 
-  vars_prompt: 
-    - name: nginx-port
+  vars_prompt:
+    - name: "nginxport"
       prompt: "Nginx port number(8093): "
       private: no
 
-    - name: apache-port
+    - name: "apacheport"
       prompt: "Apache port number(3000): "
       private: no
 
@@ -59,7 +59,7 @@
     - name: Create conf.d/reverse.conf
       copy:
         src: "./nginx-reverse.conf"
-        dest: "/etc/nginx-reverse.conf"
+        dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         owner: root
         group: root
         mode: '0644'
@@ -67,7 +67,7 @@
     - name:  Copy /home/index.html to web directory
       copy:
         src: "/home/index.html"
-        dest: "/var/web/html/index.html"
+        dest: "/var/www/html/index.html"
         owner: root
         group: root
         mode: '0644'
@@ -75,25 +75,25 @@
     - name: Apache Listen port
       become: true
       lineinfile:
-        dest: "/etc/nginx/conf/httpd.conf"
+        dest: "/etc/httpd/conf/httpd.conf"
         state: present
-        regexp: "^Listen"
-        line: "Listen: {{ apache-port }}" 
+        regexp: '^Listen'
+        line: "Listen {{ apacheport }}"
 
     - name: Update Listen port for Nginx
       become: true
       lineinfile:
-        dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
+        dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         state: present
-        regexp: "^listen"
-        line: "listen: {{ nginx-port }}"
-    
-    - name: Nginx server name 
+        regexp: '^\s+listen'
+        line: "listen {{ nginxport }}"
+
+    - name: Nginx server name
       become: true
       lineinfile:
-        dest: "/etc/nginx/conf.d/nginx-reverse.cfg"
+        dest: "/etc/nginx/conf.d/nginx-reverse.conf"
         state: present
-        regexp: "server_name "
+        regexp: '^\s+server_name\s' 
         line: "server_name stbkp01.stratos.xfusioncorp.com"
 
     - name: Restart httd
@@ -113,5 +113,3 @@
         url: "http://stbkp01.stratos.xfusioncorp.com:{{ apache-port }}"
         return_content: yes
       register: webpage
-
-

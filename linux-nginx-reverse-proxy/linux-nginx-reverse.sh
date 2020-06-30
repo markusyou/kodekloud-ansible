@@ -11,7 +11,7 @@ echo '
 [jumphost]
 locahost ansible_ssh_user=tony ansible_ssh_pass="mjolnir123" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub" ansible_become_user=root ansible_become_pass="mjolnir123"
 [apps]
-stbkup ansible_ssh_user=clint ansible_ssh_pass="H@wk3y3" ansible_ssh_key="/home/thor/.ssh/id_rsa.pub" ansible_become_user=root ansible_become_pass="H@wk3y3" ' \
+stbkup ansible_ssh_user=clint ansible_ssh_pass="H@wk3y3" ansible_ssh_key="/home/clint/.ssh/id_rsa.pub" ansible_become_user=root ansible_become_pass="H@wk3y3" ' \
 > ${project_path}/hosts
 echo "Changing directory to ${project_path}"
 cd "${project_path}"
