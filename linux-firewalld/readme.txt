@@ -44,3 +44,9 @@ systemctl restart firewalld;firewall-cmd --permanent --zone=public --add-rich-ru
 grep -i Listen /etc/httpd/conf/httpd.conf - to get port  8096 for this round
 grep -i listen /etc/nginx/nginx.conf  - get get port  5004 for this round
 
+
+family="ipv4" source address=* port port=8096 protocol=tcp accept
+
+------------
+firewall-cmd --zone=public --permanent --add-port=5000/tcp
+firewall-cmd --reload`

@@ -1,0 +1,25 @@
+---
+- name: Configure firewall rules for nginx and apache
+  gather_facts: false
+  become: true
+  hosts: apps
+
+  tasks:
+    - name: Setup user ssh key on jump host
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+    # Ensure packages are installed
+    - name: Check and install haproxy package
+      yum:
+        name: "haproxy"
+        state: installed
+
+    - name: start haproxy
+      service:
+        name: haproxy
+        state: restarted
+        enabled: yes
+
