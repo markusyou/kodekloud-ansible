@@ -1,0 +1,71 @@
+---
+- hosts: db
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: install postgresql server and client
+      yum: 
+        name:  
+          - postgresql-server
+          - postgresql
+        state: present
+
+    - name: initalize postgresql-server
+      shell: | /usr/pgsql-9.4/bin/postgresql94-setup initdb
+ 
+    - name: Update postgresql listen value
+      lineinfile: 
+        dest: /var/lib/postgres/data/postgresql.conf
+        backup: no
+        regexp: "^listen_addresses"
+        line: "listen_addresses  = '*'"
+        state: present
+
+    - name: update pg_hba.conf
+      postgresql_pg_hba:
+        dest: /var/lib/postgres/data/pg_hba.conf
+        contype: host
+        users: "{{ db_user }}"
+        source: 172.16.238.0/24
+        databases: "{{ db_name }}"
+    
+    - name: start postgresql server
+      service: 
+        name: postgresql
+        state: started
+
+    - name: Create database user 
+      postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_passwd }}"
+        priv: '*.*:ALL' 
+        state: present
+
+    - name: Create a new database 
+      postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+  
+    - name: Setup privs for created db
+      postgresql_privs:
+        db: "{{ db_name }}"
+        privs: ALL
+        roles: librarian,reader
+        grant_option: yes
+
+- hosts: apps
+  become: true
+  
+  vars_files:
+    - vars.yml
+    
+  tasks:
+    - name: install postgresql server and client
+      yum: 
+        name:  
+          - postgresql
+        state: present
+

@@ -1,0 +1,43 @@
+---
+- name: Setup up ssh creds for jump server
+  gather_facts: false
+  hosts: 127.0.0.1
+  connection: local
+
+  pre_tasks:
+    - name: Update /etc/ansible/ansible.cfg
+      become: true
+      lineinfile:
+        dest: "/etc/ansible/ansible.cfg"
+        state: present
+        regexp: '^#host_key_checking'
+        line: 'host_key_checking = False'
+
+
+  vars:
+    ssh_key_filename: id_rsa
+
+  tasks:
+    - name: Create a directory if it does not exist
+      file:
+        path: "/home/thor/.ssh/"
+        state: directory
+        mode: '0700'
+        owner: thor
+        group: thor
+
+    - name: generate SSH key "{{ssh_key_filename}}"
+      openssh_keypair:
+        path: "~/.ssh/{{ssh_key_filename}}"
+        type: rsa
+        size: 4096
+        state: present
+        force: no
+
+    - name: Add github.com to /etc/hosts file
+      become: true
+      lineinfile:
+        path: "/etc/hosts"
+        state: present
+        line: '140.82.112.4    githib.com'
+        unsafe_writes: true
