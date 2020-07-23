@@ -12,11 +12,17 @@
           - postgresql-server
           - postgresql
         state: present
-
+         
     - name: initalize postgresql-server
       shell: | 
          /usr/bin/postgresql-setup initdb
  
+     - name: copy /usr/share/pgsql/postgresql.conf.sample
+       copy: 
+         src: /usr/share/pgsql/postgresql.com.sample
+         dest: /usr/share/pgsql/postgresql.conf
+         remote_src: yes
+         
     - name: Update postgresql listen value
       lineinfile: 
         dest: /var/lib/postgres/data/postgresql.conf
