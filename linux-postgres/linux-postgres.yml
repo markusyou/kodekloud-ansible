@@ -14,7 +14,8 @@
         state: present
 
     - name: initalize postgresql-server
-      shell: | /usr/pgsql/bin/postgresql-setup initdb
+      shell: | 
+         /usr/pgsql/bin/postgresql-setup initdb
  
     - name: Update postgresql listen value
       lineinfile: 
