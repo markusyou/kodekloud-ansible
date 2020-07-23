@@ -15,7 +15,7 @@
 
     - name: initalize postgresql-server
       shell: | 
-         /usr/pgsql/bin/postgresql-setup initdb
+         /usr/bin/postgresql-setup initdb
  
     - name: Update postgresql listen value
       lineinfile: 
