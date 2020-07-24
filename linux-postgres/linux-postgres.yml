@@ -7,8 +7,8 @@
 
   tasks:
     - name: install postgresql server and client
-      yum: 
-        name:  
+      yum:
+        name:
           - postgresql-server
           - postgresql
           - postgresql-plpython
@@ -16,25 +16,25 @@
           - python-psycopg2
           - python-ipaddress
         state: present
-        
+
     #- name: python pip psycopg2
-    #  shell: | 
-    #     pip install python-psycopg2 
+    #  shell: |
+    #     pip install python-psycopg2
     #  ignore_errors: yes
-      
+
     - name: initalize postgresql-server
-      shell: | 
+      shell: |
          /usr/bin/postgresql-setup initdb
       ignore_errors: yes
- 
+
     #- name: copy /usr/share/pgsql/postgresql.conf.sample
-    #  copy: 
+    #  copy:
     #    src: /usr/share/pgsql/postgresql.com.sample
     #    dest: /var/lib/pgsql/data/postgresql.conf
     #    remote_src: yes
-         
+
     - name: Update postgresql listen value
-      lineinfile: 
+      lineinfile:
         dest: /var/lib/pgsql/data/postgresql.conf
         backup: yes
         regexp: "^listen_addresses"
@@ -48,41 +48,56 @@
         users: "{{ db_user }}"
         source: 172.16.238.0/24
         databases: "{{ db_name }}"
-    
+
+    - name: update pg_hba.conf
+      postgresql_pg_hba:
+        dest: /var/lib/pgsql/data/pg_hba.conf
+        contype: local
+        users: postgres
+        method: trust
+
     - name: start postgresql server
-      service: 
+      service:
         name: postgresql
-        state: started
+        state: restarted
 
-    - name: Create database user 
-      postgresql_user:
-        name: "{{ db_user }}"
-        password: "{{ db_passwd }}"
-        priv: '*.*:ALL' 
-        state: present
-
-    - name: Create a new database 
+    - name: Create a new database
+      become_user: postgres
+      become: true
       postgresql_db:
         name: "{{ db_name }}"
         state: present
-  
-    - name: Setup privs for created db
-      postgresql_privs:
+        #login_user: "{{ db_user }}"
+        #login_password: "{{ db_passwd }}"
+
+    - name: Create database user
+      become_user: postgres
+      become: true
+      postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_passwd }}"
+        priv: 'ALL'
+        state: present
         db: "{{ db_name }}"
-        privs: ALL
-        roles: {{ db_user }},librarian,reader
-        grant_option: yes
+
+
+    #- name: Setup privs for created db
+    #  become_user: postgres
+    #  postgresql_privs:
+    #    db: "{{ db_name }}"
+    #    privs: ALL
+    #    roles: librarian,reader
+    #    grant_option: yes
 
 - hosts: apps
   become: true
-  
+
   vars_files:
     - vars.yml
-    
+
   tasks:
     - name: install postgresql server and client
-      yum: 
-        name:  
+      yum:
+        name:
           - postgresql
         state: present
-
