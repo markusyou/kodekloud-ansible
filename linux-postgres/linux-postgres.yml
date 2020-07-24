@@ -70,7 +70,7 @@
       postgresql_privs:
         db: "{{ db_name }}"
         privs: ALL
-        roles: librarian,reader
+        roles: {{ db_user }},librarian,reader
         grant_option: yes
 
 - hosts: apps
