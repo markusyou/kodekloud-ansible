@@ -43,7 +43,7 @@
 
     - name: update pg_hba.conf
       postgresql_pg_hba:
-        dest: /var/lib/postgres/data/pg_hba.conf
+        dest: /var/lib/pgsql/data/pg_hba.conf
         contype: host
         users: "{{ db_user }}"
         source: 172.16.238.0/24
