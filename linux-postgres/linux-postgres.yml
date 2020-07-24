@@ -13,12 +13,13 @@
           - postgresql
           - postgresql-plpython
           - PyGreSQL
+          - python-psycopg2
         state: present
         
-    - name: python pip psycopg2
-      shell: | 
-         pip install python-psycopg2 
-      ignore_errors: yes
+    #- name: python pip psycopg2
+    #  shell: | 
+    #     pip install python-psycopg2 
+    #  ignore_errors: yes
       
     - name: initalize postgresql-server
       shell: | 
