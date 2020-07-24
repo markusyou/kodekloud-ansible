@@ -16,6 +16,7 @@
     - name: initalize postgresql-server
       shell: | 
          /usr/bin/postgresql-setup initdb
+      ignore_errors: yes
  
     - name: copy /usr/share/pgsql/postgresql.conf.sample
       copy: 
@@ -26,7 +27,7 @@
     - name: Update postgresql listen value
       lineinfile: 
         dest: /var/lib/postgres/data/postgresql.conf
-        backup: no
+        backup: yes
         regexp: "^listen_addresses"
         line: "listen_addresses  = '*'"
         state: present
