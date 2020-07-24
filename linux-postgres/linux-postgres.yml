@@ -11,22 +11,28 @@
         name:  
           - postgresql-server
           - postgresql
+          - python27-python-pip
         state: present
-         
+        
+    - name: python pip psycopg2
+      shell: | 
+         pip install python-psycopg2 
+      ignore_errors: yes
+      
     - name: initalize postgresql-server
       shell: | 
          /usr/bin/postgresql-setup initdb
       ignore_errors: yes
  
-    - name: copy /usr/share/pgsql/postgresql.conf.sample
-      copy: 
-        src: /usr/share/pgsql/postgresql.com.sample
-        dest: /usr/share/pgsql/postgresql.conf
-        remote_src: yes
+    #- name: copy /usr/share/pgsql/postgresql.conf.sample
+    #  copy: 
+    #    src: /usr/share/pgsql/postgresql.com.sample
+    #    dest: /var/lib/pgsql/data/postgresql.conf
+    #    remote_src: yes
          
     - name: Update postgresql listen value
       lineinfile: 
-        dest: /var/lib/postgres/data/postgresql.conf
+        dest: /var/lib/pgsql/data/postgresql.conf
         backup: yes
         regexp: "^listen_addresses"
         line: "listen_addresses  = '*'"
