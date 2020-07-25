@@ -16,22 +16,20 @@
           - python-psycopg2
           - python-ipaddress
         state: present
-
-    #- name: python pip psycopg2
-    #  shell: |
-    #     pip install python-psycopg2
-    #  ignore_errors: yes
+    
+    - set_fact:
+      db_passwd_hash: "{{ db_passwd  | password_hash('sha256', 'mysecretsalt')  }}"
+      
+    - name: Create local database user id
+      useradd:
+        name: {{ db_user }}
+        password: {{ db_passwd_hash }}
+        state: present
 
     - name: initalize postgresql-server
       shell: |
          /usr/bin/postgresql-setup initdb
       ignore_errors: yes
-
-    #- name: copy /usr/share/pgsql/postgresql.conf.sample
-    #  copy:
-    #    src: /usr/share/pgsql/postgresql.com.sample
-    #    dest: /var/lib/pgsql/data/postgresql.conf
-    #    remote_src: yes
 
     - name: Update postgresql listen value
       lineinfile:
@@ -88,24 +86,14 @@
         state: present
         db: "{{ db_name }}"
 
+    - name: Select query to db with named local user credentials
+      postgresql_query:
+        db: {{ db }}
+        login_user: {{ db_user }} 
+        login_password: {{ db_passwd }}
+        query: SELECT * FROM {{ db }} 
 
-    #- name: Setup privs for created db
-    #  become_user: postgres
-    #  postgresql_privs:
-    #    db: "{{ db_name }}"
-    #    privs: ALL
-    #    roles: librarian,reader
-    #    grant_option: yes
-
-- hosts: apps
-  become: true
-
-  vars_files:
-    - vars.yml
-
-  tasks:
-    - name: install postgresql server and client
-      yum:
-        name:
-          - postgresql
-        state: present
+    - name: Select query to db from root user
+      postgresql_query:
+        db: {{ db }}
+        query: SELECT * FROM {{ db }} 
