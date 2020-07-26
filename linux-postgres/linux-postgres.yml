@@ -41,6 +41,13 @@
    #local   kodekloud_db3   kodekloud_gem   md5
    #local   kodekloud_db3   all             md5     
    
+    - name: update pg_hba.conf root
+      postgresql_pg_hba:
+        dest: /var/lib/pgsql/data/pg_hba.conf
+        contype: local
+        users: postgres
+        method: trust
+        
     - name: update pg_hba.conf dbuser
       postgresql_pg_hba:
         dest: /var/lib/pgsql/data/pg_hba.conf
@@ -55,12 +62,13 @@
         users: all
         databases: "{{ db_name }}"
 
-    - name: update pg_hba.conf root
+    - name: Remove hosts update pg_hba.conf root
       postgresql_pg_hba:
         dest: /var/lib/pgsql/data/pg_hba.conf
-        contype: local
-        users: postgres
-        method: trust
+        contype: host
+        users: all 
+        start: absent
+
 
     - name: start postgresql server
       service:
