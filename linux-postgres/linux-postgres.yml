@@ -16,15 +16,15 @@
           - python-psycopg2
           - python-ipaddress
         state: present
-    
+
     - set_fact:
-      db_passwd_hash: "{{ db_passwd  | password_hash('sha256', 'mysecretsalt')  }}"
-      
+        db_passwd_hash: "{{ db_passwd  | password_hash('sha256', 'mysecretsalt')  }}"
+
     - name: Create local database user id
       user:
-        name: {{ db_user }}
-        password: {{ db_passwd_hash }}
-  
+        name: "{{ db_user }}"
+        password: "{{ db_passwd_hash }}"
+
     - name: initalize postgresql-server
       shell: |
          /usr/bin/postgresql-setup initdb
@@ -37,25 +37,25 @@
         regexp: "^listen_addresses"
         line: "listen_addresses  = '*'"
         state: present
-# local   kodekloud_db3   kodekloud_gem   md5
-local   kodekloud_db3   all             md5
-    - name: update pg_hba.conf
+
+   #local   kodekloud_db3   kodekloud_gem   md5
+   #local   kodekloud_db3   all             md5     
+   
+    - name: update pg_hba.conf dbuser
       postgresql_pg_hba:
         dest: /var/lib/pgsql/data/pg_hba.conf
-        contype: host
+        contype: local
         users: "{{ db_user }}"
-        source: 127.0.0.1/32
-        databases: "{{ db_name }}"
-    
-    - name: update pg_hba.conf
-      postgresql_pg_hba:
-        dest: /var/lib/pgsql/data/pg_hba.conf
-        contype: host
-        users: "{{ all }}"
-        source: 127.0.0.1/32
         databases: "{{ db_name }}"
 
-    - name: update pg_hba.conf
+    - name: update all pg_hba.conf all
+      postgresql_pg_hba:
+        dest: /var/lib/pgsql/data/pg_hba.conf
+        contype: local
+        users: all
+        databases: "{{ db_name }}"
+
+    - name: update pg_hba.conf root
       postgresql_pg_hba:
         dest: /var/lib/pgsql/data/pg_hba.conf
         contype: local
@@ -88,12 +88,13 @@ local   kodekloud_db3   all             md5
 
     - name: Select query to db with named local user credentials
       postgresql_query:
-        db: {{ db }}
-        login_user: {{ db_user }} 
-        login_password: {{ db_passwd }}
-        query: SELECT * FROM {{ db }} 
+        db: "{{ db }}"
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_passwd }}"
+        query: "SELECT * FROM *  {{ db }}"
 
     - name: Select query to db from root user
       postgresql_query:
-        db: {{ db }}
-        query: SELECT * FROM {{ db }} 
+        db: "{{ db }}"
+        query: "SELECT * FROM {{ db }} "
+        
