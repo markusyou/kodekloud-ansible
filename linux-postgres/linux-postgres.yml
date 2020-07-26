@@ -62,13 +62,7 @@
         users: all
         databases: "{{ db_name }}"
 
-    - name: Remove hosts update pg_hba.conf root
-      postgresql_pg_hba:
-        dest: /var/lib/pgsql/data/pg_hba.conf
-        contype: host
-        users: all 
-        start: absent
-
+# figure out syntax for absent
 
     - name: start postgresql server
       service:
