@@ -23,4 +23,4 @@ cd "${project_path}"
 echo "Launch jump server ansible script."
 ansible-playbook -i hosts jumpserver.yml
 echo "Launch project ansible script"
-echo "updated vars.yml, then run this command \nansible-playbook -i ./hosts ${project_file}.yml"
+echo "updated vars.yml, then run this command ansible-playbook -i ./hosts ${project_file}.yml"
