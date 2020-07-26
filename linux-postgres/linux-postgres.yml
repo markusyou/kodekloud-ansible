@@ -37,7 +37,8 @@
         regexp: "^listen_addresses"
         line: "listen_addresses  = '*'"
         state: present
-
+# local   kodekloud_db3   kodekloud_gem   md5
+local   kodekloud_db3   all             md5
     - name: update pg_hba.conf
       postgresql_pg_hba:
         dest: /var/lib/pgsql/data/pg_hba.conf
