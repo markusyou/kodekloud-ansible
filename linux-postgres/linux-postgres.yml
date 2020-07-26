@@ -21,11 +21,10 @@
       db_passwd_hash: "{{ db_passwd  | password_hash('sha256', 'mysecretsalt')  }}"
       
     - name: Create local database user id
-      useradd:
+      user:
         name: {{ db_user }}
         password: {{ db_passwd_hash }}
-        state: present
-
+  
     - name: initalize postgresql-server
       shell: |
          /usr/bin/postgresql-setup initdb
