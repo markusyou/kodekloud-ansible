@@ -1,0 +1,51 @@
+---
+- name: Configure firewall rules for nginx and apache
+  gather_facts: false
+  become: true
+  hosts: apps
+
+  tasks:
+    - name: Setup user ssh key on jump host
+      authorized_key:
+        user: "{{ ansible_ssh_user }}"
+        state: present
+        key: "{{ lookup('file', '/home/thor/.ssh/id_rsa.pub') }}"
+
+    - name: start dbus
+      service:
+        name: dbus
+        state: restarted
+        enabled: yes
+
+    - name: Check and install httpd package
+      yum:
+        name: "httpd"
+        state: installed
+
+    - name: Check and install firewalld package
+      yum:
+        name: "iptables"
+        state: installed
+
+#    - name: start iptables
+#      service:
+#        name: "iptables"
+#        state: restarted
+#        enabled: yes
+
+    - name: Match on IP ranges
+      iptables:
+        chain: FORWARD
+        src_range: 172.16.238.14
+        dst_range: 172.16.238.10-172.16.238.12
+        to_ports: 8082
+        protocol: tcp
+        enabled: yes
+
+    - name: Match on IP ranges
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        to_ports: 8082
+        ipolicy: drop
+        enabled: yes
