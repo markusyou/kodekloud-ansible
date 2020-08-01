@@ -42,10 +42,10 @@
         protocol: tcp
         enabled: yes
 
-    - name: Match on IP ranges
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        to_ports: 8082
-        ipolicy: drop
-        enabled: yes
+#    - name: Match on IP ranges
+#      iptables:
+#        chain: INPUT
+#        protocol: tcp
+#        to_ports: 8082
+#        ipolicy: drop
+#        enabled: yes
