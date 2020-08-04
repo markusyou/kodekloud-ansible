@@ -34,6 +34,10 @@
     - name: Deny access to specific ports
       shell: |
         iptables -A INPUT -p tcp --dport 8083 -j DROP
+    
+    - name: Make perm
+      shell: |
+        iptables-save
  
 
 #    - name: start iptables
