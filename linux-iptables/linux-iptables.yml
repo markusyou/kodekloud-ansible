@@ -27,25 +27,34 @@
         name: "iptables"
         state: installed
 
+    - name: Allow lb to specific ports
+      shell: |
+        iptables -I INPUT -s 172.16.238.14 -p tcp --dport 8083 -j ACCEPT
+        
+    - name: Deny access to specific ports
+      shell: |
+        iptables -A INPUT -p tcp --dport 8083 -j DROP
+ 
+
 #    - name: start iptables
 #      service:
 #        name: "iptables"
 #        state: restarted
 #        enabled: yes
 
-    - name: Match on IP ranges
-      iptables:
-        chain: FORWARD
-        src_range: 172.16.238.14
-        dst_range: 172.16.238.10-172.16.238.12
-        to_ports: 8082
-        protocol: tcp
-        enabled: yes
-
-    - name: Match on IP ranges
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        to_ports: 8082
-        ipolicy: drop
-        enabled: yes
+        #       #    - name: Match on IP ranges
+        #      iptables:
+        ##chain: FORWARD
+        #src_range: 172.16.238.14
+        #dst_range: 172.16.238.10-172.16.238.12
+        #to_ports: 8082
+        #protocol: tcp
+        # enabled: yes
+        #
+        # - name: Match on IP ranges
+        #iptables:
+        # chain: INPUT
+        # protocol: tcp
+        # to_ports: 8082
+        # ipolicy: drop
+        # enabled: yes
