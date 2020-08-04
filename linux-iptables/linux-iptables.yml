@@ -42,6 +42,7 @@
 #        state: restarted
 #        enabled: yes
 
+<<<<<<< HEAD
         #       #    - name: Match on IP ranges
         #      iptables:
         ##chain: FORWARD
@@ -58,3 +59,21 @@
         # to_ports: 8082
         # ipolicy: drop
         # enabled: yes
+=======
+    - name: Match on IP ranges
+      iptables:
+        chain: FORWARD
+        src_range: 172.16.238.14
+        dst_range: 172.16.238.10-172.16.238.12
+        to_ports: 8082
+        protocol: tcp
+        enabled: yes
+
+#    - name: Match on IP ranges
+#      iptables:
+#        chain: INPUT
+#        protocol: tcp
+#        to_ports: 8082
+#        ipolicy: drop
+#        enabled: yes
+>>>>>>> fa6b87461a2bff95bd1996ba26ed555fef881f99
