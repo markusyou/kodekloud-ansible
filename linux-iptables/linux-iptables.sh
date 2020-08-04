@@ -15,6 +15,6 @@ stapp03 ansible_ssh_user=banner ansible_ssh_pass="BigGr33n" ansible_ssh_key="/ho
 > /home/thor/kodekloud-ansible/linux-iptables/hosts 
 cd /home/thor/kodekloud-ansible/linux-iptables
 echo "Launch jump server ansible script."
-echo "ansible-playbook -i ./hosts jumpserver.yml"
+ansible-playbook -i ./hosts jumpserver.yml
 echo "Launch nfs server ansible script"
 echo "ansible-playbook -i ./hosts linux-iptables.yml"
